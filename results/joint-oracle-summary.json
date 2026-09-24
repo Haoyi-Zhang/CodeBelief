@@ -1,0 +1,13 @@
+{
+  "approximation_bound_violations": 0,
+  "cases": 825,
+  "certificate_cases": 704,
+  "exact_oracle_discrepancies": 0,
+  "maximum_frontier_entries": 24,
+  "origin_range": [
+    4,
+    14
+  ],
+  "seed": 20260918,
+  "weighted": true
+}

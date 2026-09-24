@@ -1,0 +1,119 @@
+{
+  "oracle_selected": null,
+  "problem": {
+    "facts": [
+      {
+        "literal": "not:policy:mjson:place-controlled-integer-loop@1.2.6",
+        "name": "before-versioned",
+        "origins": [
+          "before-feature",
+          "history-change"
+        ]
+      },
+      {
+        "literal": "policy:mjson:place-controlled-integer-loop@1.2.7",
+        "name": "after-versioned",
+        "origins": [
+          "after-feature",
+          "history-change"
+        ]
+      }
+    ],
+    "metadata": {
+      "defect_label": "none",
+      "host": "mjson",
+      "profile": "code-heavy",
+      "project": "mjson",
+      "seeded": "true",
+      "variant": "no-bridge-control"
+    },
+    "name": "public-mjson-no-bridge-control-code-heavy",
+    "negative": "not:policy:mjson:place-controlled-integer-loop",
+    "origins": [
+      {
+        "anchor": "for (i = 0, t = mul; d >= 1.0 && s + n < (int) sizeof(buf); i++)",
+        "id": "before-feature",
+        "kind": "code",
+        "metadata": {
+          "tag": "1.2.6"
+        },
+        "path": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
+        "weight": 3
+      },
+      {
+        "anchor": "for (i = 0, t = mul; t >= 1.0 && s + n < (int) sizeof(buf); i++)",
+        "id": "after-feature",
+        "kind": "code",
+        "metadata": {
+          "tag": "1.2.7"
+        },
+        "path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+        "weight": 3
+      },
+      {
+        "anchor": "while (n > 0 && buf[s + n - 1] == '0') n--;  // Trim trailing zeros",
+        "id": "before-context",
+        "kind": "code",
+        "metadata": {
+          "tag": "1.2.6"
+        },
+        "path": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
+        "weight": 3
+      },
+      {
+        "anchor": "while (n > 0 && buf[s + n - 1] == '0') n--;  // Trim trailing zeros",
+        "id": "after-context",
+        "kind": "code",
+        "metadata": {
+          "tag": "1.2.7"
+        },
+        "path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+        "weight": 3
+      },
+      {
+        "anchor": "int mjson_print_dbl(mjson_print_fn_t fn, void *fnd, double d, int width)",
+        "id": "shared-code",
+        "kind": "code",
+        "metadata": {
+          "tag": "1.2.7"
+        },
+        "path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+        "weight": 3
+      },
+      {
+        "anchor": null,
+        "id": "history-change",
+        "kind": "change",
+        "metadata": {
+          "after_anchor": "for (i = 0, t = mul; t >= 1.0 && s + n < (int) sizeof(buf); i++)",
+          "after_path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+          "after_tag": "1.2.7",
+          "before_anchor": "for (i = 0, t = mul; d >= 1.0 && s + n < (int) sizeof(buf); i++)",
+          "before_path": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
+          "before_tag": "1.2.6",
+          "host": "mjson",
+          "project": "mjson"
+        },
+        "path": null,
+        "weight": 1
+      },
+      {
+        "anchor": null,
+        "id": "entity-bridge",
+        "kind": "bridge",
+        "metadata": {
+          "assumption": "the named routine denotes one evolving entity across the two tagged snapshots"
+        },
+        "path": null,
+        "weight": 1
+      }
+    ],
+    "positive": "policy:mjson:place-controlled-integer-loop",
+    "rules": []
+  },
+  "schema": "joint-contradiction-certificate-v1",
+  "solution": {
+    "algorithm": "exact-antichain",
+    "status": "no-contradiction-certificate"
+  }
+}

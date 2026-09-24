@@ -1,0 +1,226 @@
+{
+  "oracle_selected": [
+    "entity-bridge",
+    "history-change",
+    "shared-code"
+  ],
+  "problem": {
+    "facts": [
+      {
+        "literal": "private-positive:mjson",
+        "name": "positive-private",
+        "origins": [
+          "after-feature",
+          "after-context"
+        ]
+      },
+      {
+        "literal": "private-negative:mjson",
+        "name": "negative-private",
+        "origins": [
+          "before-feature",
+          "before-context"
+        ]
+      },
+      {
+        "literal": "shared-positive:mjson",
+        "name": "positive-shared",
+        "origins": [
+          "shared-code",
+          "history-change",
+          "entity-bridge"
+        ]
+      },
+      {
+        "literal": "shared-negative:mjson",
+        "name": "negative-shared",
+        "origins": [
+          "shared-code",
+          "history-change",
+          "entity-bridge"
+        ]
+      }
+    ],
+    "metadata": {
+      "defect_label": "none",
+      "host": "mjson",
+      "profile": "code-heavy",
+      "project": "mjson",
+      "seeded": "true",
+      "variant": "choice"
+    },
+    "name": "public-mjson-choice-code-heavy",
+    "negative": "not:policy:mjson:place-controlled-integer-loop",
+    "origins": [
+      {
+        "anchor": "for (i = 0, t = mul; d >= 1.0 && s + n < (int) sizeof(buf); i++)",
+        "id": "before-feature",
+        "kind": "code",
+        "metadata": {
+          "tag": "1.2.6"
+        },
+        "path": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
+        "weight": 3
+      },
+      {
+        "anchor": "for (i = 0, t = mul; t >= 1.0 && s + n < (int) sizeof(buf); i++)",
+        "id": "after-feature",
+        "kind": "code",
+        "metadata": {
+          "tag": "1.2.7"
+        },
+        "path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+        "weight": 3
+      },
+      {
+        "anchor": "while (n > 0 && buf[s + n - 1] == '0') n--;  // Trim trailing zeros",
+        "id": "before-context",
+        "kind": "code",
+        "metadata": {
+          "tag": "1.2.6"
+        },
+        "path": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
+        "weight": 3
+      },
+      {
+        "anchor": "while (n > 0 && buf[s + n - 1] == '0') n--;  // Trim trailing zeros",
+        "id": "after-context",
+        "kind": "code",
+        "metadata": {
+          "tag": "1.2.7"
+        },
+        "path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+        "weight": 3
+      },
+      {
+        "anchor": "int mjson_print_dbl(mjson_print_fn_t fn, void *fnd, double d, int width)",
+        "id": "shared-code",
+        "kind": "code",
+        "metadata": {
+          "tag": "1.2.7"
+        },
+        "path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+        "weight": 3
+      },
+      {
+        "anchor": null,
+        "id": "history-change",
+        "kind": "change",
+        "metadata": {
+          "after_anchor": "for (i = 0, t = mul; t >= 1.0 && s + n < (int) sizeof(buf); i++)",
+          "after_path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+          "after_tag": "1.2.7",
+          "before_anchor": "for (i = 0, t = mul; d >= 1.0 && s + n < (int) sizeof(buf); i++)",
+          "before_path": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
+          "before_tag": "1.2.6",
+          "host": "mjson",
+          "project": "mjson"
+        },
+        "path": null,
+        "weight": 1
+      },
+      {
+        "anchor": null,
+        "id": "entity-bridge",
+        "kind": "bridge",
+        "metadata": {
+          "assumption": "the named routine denotes one evolving entity across the two tagged snapshots"
+        },
+        "path": null,
+        "weight": 1
+      }
+    ],
+    "positive": "policy:mjson:place-controlled-integer-loop",
+    "rules": [
+      {
+        "body": [
+          "private-positive:mjson"
+        ],
+        "head": "policy:mjson:place-controlled-integer-loop",
+        "name": "positive-private-to-policy"
+      },
+      {
+        "body": [
+          "private-negative:mjson"
+        ],
+        "head": "not:policy:mjson:place-controlled-integer-loop",
+        "name": "negative-private-to-policy"
+      },
+      {
+        "body": [
+          "shared-positive:mjson"
+        ],
+        "head": "policy:mjson:place-controlled-integer-loop",
+        "name": "positive-shared-to-policy"
+      },
+      {
+        "body": [
+          "shared-negative:mjson"
+        ],
+        "head": "not:policy:mjson:place-controlled-integer-loop",
+        "name": "negative-shared-to-policy"
+      }
+    ]
+  },
+  "schema": "joint-contradiction-certificate-v1",
+  "solution": {
+    "algorithm": "exact-antichain",
+    "cost": 5,
+    "metrics": {
+      "iterations": 2,
+      "negative_depth": 2,
+      "negative_frontier": 2,
+      "positive_depth": 2,
+      "positive_frontier": 2,
+      "total_frontier_entries": 8
+    },
+    "negative_proof": {
+      "literal": "not:policy:mjson:place-controlled-integer-loop",
+      "premises": [
+        {
+          "literal": "shared-negative:mjson",
+          "premises": [],
+          "step": "negative-shared",
+          "support": [
+            "entity-bridge",
+            "history-change",
+            "shared-code"
+          ]
+        }
+      ],
+      "step": "negative-shared-to-policy",
+      "support": [
+        "entity-bridge",
+        "history-change",
+        "shared-code"
+      ]
+    },
+    "positive_proof": {
+      "literal": "policy:mjson:place-controlled-integer-loop",
+      "premises": [
+        {
+          "literal": "shared-positive:mjson",
+          "premises": [],
+          "step": "positive-shared",
+          "support": [
+            "entity-bridge",
+            "history-change",
+            "shared-code"
+          ]
+        }
+      ],
+      "step": "positive-shared-to-policy",
+      "support": [
+        "entity-bridge",
+        "history-change",
+        "shared-code"
+      ]
+    },
+    "selected": [
+      "entity-bridge",
+      "history-change",
+      "shared-code"
+    ],
+    "status": "certificate"
+  }
+}

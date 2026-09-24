@@ -1,0 +1,134 @@
+{
+  "oracle_selected": null,
+  "problem": {
+    "facts": [
+      {
+        "literal": "after-a:inih",
+        "name": "after-only-a",
+        "origins": [
+          "after-feature",
+          "history-change"
+        ]
+      },
+      {
+        "literal": "after-b:inih",
+        "name": "after-only-b",
+        "origins": [
+          "after-context",
+          "entity-bridge"
+        ]
+      }
+    ],
+    "metadata": {
+      "defect_label": "none",
+      "host": "inih",
+      "profile": "unit",
+      "project": "inih",
+      "seeded": "true",
+      "variant": "single-side-control"
+    },
+    "name": "public-inih-single-side-control-unit",
+    "negative": "not:policy:inih:consume-overlong-line",
+    "origins": [
+      {
+        "anchor": "if (max_line >= INI_MAX_LINE)\n                break;",
+        "id": "before-feature",
+        "kind": "code",
+        "metadata": {
+          "tag": "r58"
+        },
+        "path": "inputs/public/inih/r58/ini_parse_stream_excerpt.c",
+        "weight": 1
+      },
+      {
+        "anchor": "char abyss[16];  /* Used to consume input when a line is too long. */",
+        "id": "after-feature",
+        "kind": "code",
+        "metadata": {
+          "tag": "r59"
+        },
+        "path": "inputs/public/inih/r59/ini_parse_stream_excerpt.c",
+        "weight": 1
+      },
+      {
+        "anchor": "while (offset == max_line - 1 && line[offset - 1] != '\\n')",
+        "id": "before-context",
+        "kind": "code",
+        "metadata": {
+          "tag": "r58"
+        },
+        "path": "inputs/public/inih/r58/ini_parse_stream_excerpt.c",
+        "weight": 1
+      },
+      {
+        "anchor": "while (offset == max_line - 1 && line[offset - 1] != '\\n')",
+        "id": "after-context",
+        "kind": "code",
+        "metadata": {
+          "tag": "r59"
+        },
+        "path": "inputs/public/inih/r59/ini_parse_stream_excerpt.c",
+        "weight": 1
+      },
+      {
+        "anchor": "int ini_parse_stream(ini_reader reader, void* stream, ini_handler handler,",
+        "id": "shared-code",
+        "kind": "code",
+        "metadata": {
+          "tag": "r59"
+        },
+        "path": "inputs/public/inih/r59/ini_parse_stream_excerpt.c",
+        "weight": 1
+      },
+      {
+        "anchor": null,
+        "id": "history-change",
+        "kind": "change",
+        "metadata": {
+          "after_anchor": "char abyss[16];  /* Used to consume input when a line is too long. */",
+          "after_path": "inputs/public/inih/r59/ini_parse_stream_excerpt.c",
+          "after_tag": "r59",
+          "before_anchor": "if (max_line >= INI_MAX_LINE)\n                break;",
+          "before_path": "inputs/public/inih/r58/ini_parse_stream_excerpt.c",
+          "before_tag": "r58",
+          "host": "inih",
+          "project": "inih"
+        },
+        "path": null,
+        "weight": 1
+      },
+      {
+        "anchor": null,
+        "id": "entity-bridge",
+        "kind": "bridge",
+        "metadata": {
+          "assumption": "the named routine denotes one evolving entity across the two tagged snapshots"
+        },
+        "path": null,
+        "weight": 1
+      }
+    ],
+    "positive": "policy:inih:consume-overlong-line",
+    "rules": [
+      {
+        "body": [
+          "after-a:inih"
+        ],
+        "head": "policy:inih:consume-overlong-line",
+        "name": "after-a-to-policy"
+      },
+      {
+        "body": [
+          "after-b:inih"
+        ],
+        "head": "policy:inih:consume-overlong-line",
+        "name": "after-b-to-policy"
+      }
+    ]
+  },
+  "schema": "joint-contradiction-certificate-v1",
+  "solution": {
+    "algorithm": "exact-antichain",
+    "status": "no-contradiction-certificate"
+  }
+}

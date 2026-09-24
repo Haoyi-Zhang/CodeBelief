@@ -1,0 +1,134 @@
+{
+  "oracle_selected": null,
+  "problem": {
+    "facts": [
+      {
+        "literal": "after-a:cjson",
+        "name": "after-only-a",
+        "origins": [
+          "after-feature",
+          "history-change"
+        ]
+      },
+      {
+        "literal": "after-b:cjson",
+        "name": "after-only-b",
+        "origins": [
+          "after-context",
+          "entity-bridge"
+        ]
+      }
+    ],
+    "metadata": {
+      "defect_label": "none",
+      "host": "cjson",
+      "profile": "code-heavy",
+      "project": "cJSON",
+      "seeded": "true",
+      "variant": "single-side-control"
+    },
+    "name": "public-cjson-single-side-control-code-heavy",
+    "negative": "not:policy:cjson:valuestring-null-guard",
+    "origins": [
+      {
+        "anchor": "if (object->valuestring == NULL)",
+        "id": "before-feature",
+        "kind": "code",
+        "metadata": {
+          "tag": "v1.7.17"
+        },
+        "path": "inputs/public/cjson/v1.7.17/cJSON_SetValuestring.c",
+        "weight": 3
+      },
+      {
+        "anchor": "if (object->valuestring == NULL || valuestring == NULL)",
+        "id": "after-feature",
+        "kind": "code",
+        "metadata": {
+          "tag": "v1.7.18"
+        },
+        "path": "inputs/public/cjson/v1.7.18/cJSON_SetValuestring.c",
+        "weight": 3
+      },
+      {
+        "anchor": "if (strlen(valuestring) <= strlen(object->valuestring))",
+        "id": "before-context",
+        "kind": "code",
+        "metadata": {
+          "tag": "v1.7.17"
+        },
+        "path": "inputs/public/cjson/v1.7.17/cJSON_SetValuestring.c",
+        "weight": 3
+      },
+      {
+        "anchor": "if (strlen(valuestring) <= strlen(object->valuestring))",
+        "id": "after-context",
+        "kind": "code",
+        "metadata": {
+          "tag": "v1.7.18"
+        },
+        "path": "inputs/public/cjson/v1.7.18/cJSON_SetValuestring.c",
+        "weight": 3
+      },
+      {
+        "anchor": "CJSON_PUBLIC(char*) cJSON_SetValuestring(cJSON *object, const char *valuestring)",
+        "id": "shared-code",
+        "kind": "code",
+        "metadata": {
+          "tag": "v1.7.18"
+        },
+        "path": "inputs/public/cjson/v1.7.18/cJSON_SetValuestring.c",
+        "weight": 3
+      },
+      {
+        "anchor": null,
+        "id": "history-change",
+        "kind": "change",
+        "metadata": {
+          "after_anchor": "if (object->valuestring == NULL || valuestring == NULL)",
+          "after_path": "inputs/public/cjson/v1.7.18/cJSON_SetValuestring.c",
+          "after_tag": "v1.7.18",
+          "before_anchor": "if (object->valuestring == NULL)",
+          "before_path": "inputs/public/cjson/v1.7.17/cJSON_SetValuestring.c",
+          "before_tag": "v1.7.17",
+          "host": "cjson",
+          "project": "cJSON"
+        },
+        "path": null,
+        "weight": 1
+      },
+      {
+        "anchor": null,
+        "id": "entity-bridge",
+        "kind": "bridge",
+        "metadata": {
+          "assumption": "the named routine denotes one evolving entity across the two tagged snapshots"
+        },
+        "path": null,
+        "weight": 1
+      }
+    ],
+    "positive": "policy:cjson:valuestring-null-guard",
+    "rules": [
+      {
+        "body": [
+          "after-a:cjson"
+        ],
+        "head": "policy:cjson:valuestring-null-guard",
+        "name": "after-a-to-policy"
+      },
+      {
+        "body": [
+          "after-b:cjson"
+        ],
+        "head": "policy:cjson:valuestring-null-guard",
+        "name": "after-b-to-policy"
+      }
+    ]
+  },
+  "schema": "joint-contradiction-certificate-v1",
+  "solution": {
+    "algorithm": "exact-antichain",
+    "status": "no-contradiction-certificate"
+  }
+}

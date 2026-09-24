@@ -1,0 +1,18 @@
+test_certificate_and_mutations (test_core.CoreTests.test_certificate_and_mutations) ... ok
+test_domain_validation (test_core.CoreTests.test_domain_validation) ... ok
+test_empty_and_background_false (test_core.CoreTests.test_empty_and_background_false) ... ok
+test_exact_code_snapshots (test_core.CoreTests.test_exact_code_snapshots) ... ok
+test_frontend_comments_and_empty (test_core.CoreTests.test_frontend_comments_and_empty) ... ok
+test_frontend_rejects_unsupported (test_core.CoreTests.test_frontend_rejects_unsupported) ... ok
+test_horn_certificate_mutations (test_core.CoreTests.test_horn_certificate_mutations) ... ok
+test_horn_chain (test_core.CoreTests.test_horn_chain) ... ok
+test_pinned_different_question (test_core.CoreTests.test_pinned_different_question) ... ok
+test_remined_collapse_and_disjoint_boundary (test_core.CoreTests.test_remined_collapse_and_disjoint_boundary) ... ok
+test_sharing_cardinality (test_core.CoreTests.test_sharing_cardinality) ... ok
+test_three_site_trap (test_core.CoreTests.test_three_site_trap) ... ok
+test_unbounded_family (test_core.CoreTests.test_unbounded_family) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.009s
+
+OK
