@@ -3,10 +3,18 @@
     "after-context",
     "after-feature",
     "before-context",
-    "before-feature"
+    "before-feature",
+    "entity-bridge"
   ],
   "problem": {
     "facts": [
+      {
+        "literal": "bridge:mjson",
+        "name": "entity-bridge-fact",
+        "origins": [
+          "entity-bridge"
+        ]
+      },
       {
         "literal": "private-positive:mjson",
         "name": "positive-private",
@@ -28,8 +36,8 @@
         "name": "positive-shared",
         "origins": [
           "shared-code",
-          "history-change",
-          "entity-bridge"
+          "after-context",
+          "history-change"
         ]
       },
       {
@@ -37,8 +45,8 @@
         "name": "negative-shared",
         "origins": [
           "shared-code",
-          "history-change",
-          "entity-bridge"
+          "after-context",
+          "history-change"
         ]
       }
     ],
@@ -58,7 +66,10 @@
         "id": "before-feature",
         "kind": "code",
         "metadata": {
-          "tag": "1.2.6"
+          "file": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
+          "host": "mjson",
+          "project": "mjson",
+          "snapshot": "1.2.6"
         },
         "path": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
         "weight": 1
@@ -68,7 +79,10 @@
         "id": "after-feature",
         "kind": "code",
         "metadata": {
-          "tag": "1.2.7"
+          "file": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+          "host": "mjson",
+          "project": "mjson",
+          "snapshot": "1.2.7"
         },
         "path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
         "weight": 1
@@ -78,7 +92,10 @@
         "id": "before-context",
         "kind": "code",
         "metadata": {
-          "tag": "1.2.6"
+          "file": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
+          "host": "mjson",
+          "project": "mjson",
+          "snapshot": "1.2.6"
         },
         "path": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
         "weight": 1
@@ -88,7 +105,10 @@
         "id": "after-context",
         "kind": "code",
         "metadata": {
-          "tag": "1.2.7"
+          "file": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+          "host": "mjson",
+          "project": "mjson",
+          "snapshot": "1.2.7"
         },
         "path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
         "weight": 1
@@ -98,7 +118,10 @@
         "id": "shared-code",
         "kind": "code",
         "metadata": {
-          "tag": "1.2.7"
+          "file": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+          "host": "mjson",
+          "project": "mjson",
+          "snapshot": "1.2.7"
         },
         "path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
         "weight": 1
@@ -109,11 +132,13 @@
         "kind": "change",
         "metadata": {
           "after_anchor": "for (i = 0, t = mul; t >= 1.0 && s + n < (int) sizeof(buf); i++)",
-          "after_path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
-          "after_tag": "1.2.7",
+          "after_file": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+          "after_origin": "after-feature",
+          "after_snapshot": "1.2.7",
           "before_anchor": "for (i = 0, t = mul; d >= 1.0 && s + n < (int) sizeof(buf); i++)",
-          "before_path": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
-          "before_tag": "1.2.6",
+          "before_file": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
+          "before_origin": "before-feature",
+          "before_snapshot": "1.2.6",
           "host": "mjson",
           "project": "mjson"
         },
@@ -125,7 +150,13 @@
         "id": "entity-bridge",
         "kind": "bridge",
         "metadata": {
-          "assumption": "the named routine denotes one evolving entity across the two tagged snapshots"
+          "after_origin": "after-feature",
+          "after_snapshot": "1.2.7",
+          "assumption": "the referenced routine denotes one evolving entity across the two tagged snapshots",
+          "before_origin": "before-feature",
+          "before_snapshot": "1.2.6",
+          "host": "mjson",
+          "project": "mjson"
         },
         "path": null,
         "weight": 2
@@ -135,28 +166,32 @@
     "rules": [
       {
         "body": [
-          "private-positive:mjson"
+          "private-positive:mjson",
+          "bridge:mjson"
         ],
         "head": "policy:mjson:place-controlled-integer-loop",
         "name": "positive-private-to-policy"
       },
       {
         "body": [
-          "private-negative:mjson"
+          "private-negative:mjson",
+          "bridge:mjson"
         ],
         "head": "not:policy:mjson:place-controlled-integer-loop",
         "name": "negative-private-to-policy"
       },
       {
         "body": [
-          "shared-positive:mjson"
+          "shared-positive:mjson",
+          "bridge:mjson"
         ],
         "head": "policy:mjson:place-controlled-integer-loop",
         "name": "positive-shared-to-policy"
       },
       {
         "body": [
-          "shared-negative:mjson"
+          "shared-negative:mjson",
+          "bridge:mjson"
         ],
         "head": "not:policy:mjson:place-controlled-integer-loop",
         "name": "negative-shared-to-policy"
@@ -166,14 +201,14 @@
   "schema": "joint-contradiction-certificate-v1",
   "solution": {
     "algorithm": "exact-antichain",
-    "cost": 4,
+    "cost": 6,
     "metrics": {
       "iterations": 2,
       "negative_depth": 2,
       "negative_frontier": 2,
       "positive_depth": 2,
       "positive_frontier": 2,
-      "total_frontier_entries": 8
+      "total_frontier_entries": 9
     },
     "negative_proof": {
       "literal": "not:policy:mjson:place-controlled-integer-loop",
@@ -186,12 +221,21 @@
             "before-context",
             "before-feature"
           ]
+        },
+        {
+          "literal": "bridge:mjson",
+          "premises": [],
+          "step": "entity-bridge-fact",
+          "support": [
+            "entity-bridge"
+          ]
         }
       ],
       "step": "negative-private-to-policy",
       "support": [
         "before-context",
-        "before-feature"
+        "before-feature",
+        "entity-bridge"
       ]
     },
     "positive_proof": {
@@ -205,19 +249,29 @@
             "after-context",
             "after-feature"
           ]
+        },
+        {
+          "literal": "bridge:mjson",
+          "premises": [],
+          "step": "entity-bridge-fact",
+          "support": [
+            "entity-bridge"
+          ]
         }
       ],
       "step": "positive-private-to-policy",
       "support": [
         "after-context",
-        "after-feature"
+        "after-feature",
+        "entity-bridge"
       ]
     },
     "selected": [
       "after-context",
       "after-feature",
       "before-context",
-      "before-feature"
+      "before-feature",
+      "entity-bridge"
     ],
     "status": "certificate"
   }

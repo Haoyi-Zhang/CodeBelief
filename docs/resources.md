@@ -31,7 +31,7 @@ Matching notices are stored under `inputs/public/licenses/`. The manifest includ
 
 ## Output inventory
 
-`results/expected-files.json` lists 81 deterministic outputs. Large case-level evidence is retained as CSV or JSON Lines rather than summarized away. Machine-dependent files such as `joint-public-timings.jsonl`, `joint-oracle-timings.jsonl`, `joint-scaling-timings.csv`, logs, and reproduction measurements are not included in byte-equality expectations.
+`results/expected-files.json` lists 85 deterministic outputs. Large case-level evidence is retained as CSV or JSON Lines rather than summarized away. Machine-dependent files such as `joint-public-timings.jsonl`, `joint-oracle-timings.jsonl`, `joint-scaling-timings.csv`, logs, and reproduction measurements are not included in byte-equality expectations.
 
 The largest retained scientific files are the exact population rows and Horn cases. All remain far below project download, expansion, memory, CPU, and archive ceilings.
 

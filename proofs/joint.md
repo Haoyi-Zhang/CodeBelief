@@ -62,43 +62,74 @@ premise support enables its premise.  Selecting their union enables every
 premise simultaneously, so the Horn rule derives `h`.  Subset pruning only
 removes supports; it never changes the proof attached to a retained support.
 
-### Theorem 3 (completeness for inclusion-minimal supports)
+### Lemma 3 (fixed-point subset representative)
+
+For every finite proof tree `T` of literal `l` with support `A`, the fixed-point
+frontier `F(l)` contains a support `B subseteq A`.
+
+**Proof.**  Use structural induction on the given proof tree.  If `T` is a base
+fact leaf with support `A`, initialization generates `A`.  The frontier
+invariant ensures that any generated support later rejected or removed always
+has a retained subset representative, so the fixed point contains some
+`B subseteq A`.
+
+Otherwise the root applies a rule to unchanged child proof trees
+`T_1,...,T_k` with supports `A_1,...,A_k` and `A=union_i A_i`.  Structural
+induction on each child gives fixed-point supports `B_i subseteq A_i` in the
+corresponding premise frontiers.  The fixed-point Cartesian product therefore
+generates `C=union_i B_i subseteq A` for the head.  The frontier invariant
+leaves a retained head support `B subseteq C subseteq A`.  This argument does
+not replace a premise proof by a smaller proof and then reuse the original
+height induction.
+
+### Theorem 4 (completeness for inclusion-minimal supports)
 
 At the fixed point, `F(l)` contains every inclusion-minimal proof support for
 every derivable literal `l`.
 
-**Proof.**  Let `A` be an inclusion-minimal support of a proof of `l`, and
-induct on the height of a minimum-height proof with support `A`.  If the proof
-is a base fact, its support is inserted initially.  It cannot be discarded by
-a strict subset support without contradicting the minimality of `A`; an equal
-support leaves an equivalent retained proof.
+**Proof.**  Let `A` be inclusion-minimal for `l`.  Lemma 3 gives a retained
+`B subseteq A`.  Soundness gives a proof of `l` from `B`; minimality forces
+`B=A`.
 
-Otherwise the final inference is a rule with premise proofs having supports
-`A_1,...,A_k` and union `A`.  Replace each premise proof, if necessary, by an
-inclusion-minimal premise support `B_i subseteq A_i`.  By induction, each
-`B_i` appears in its premise frontier.  A propagation pass therefore considers
-`B = union_i B_i` for the rule head.  We have `B subseteq A`.  If `B` were a
-strict subset, it would derive `l`, contradicting the inclusion-minimality of
-`A`; hence `B=A`.  The insertion either retains `A` or finds an existing subset
-support.  The latter must again equal `A`.  Thus `A` is present at the fixed
-point.
-
-### Corollary 4 (exact joint optimum)
+### Corollary 5 (exact joint optimum)
 
 Enumerating every pair in `F(p) x F(not:p)` and choosing a minimum-cost union
 returns a globally minimum contradiction certificate.
 
 **Proof.**  By Theorem 2 every enumerated pair is feasible.  Consider an
 optimal certificate and choose one proof of each target under it.  Each proof
-contains an inclusion-minimal sub-support for its target.  By Theorem 3 both
+contains an inclusion-minimal sub-support for its target.  By Theorem 4 both
 sub-supports occur in the corresponding frontiers, and their union is a subset
 of the optimal certificate.  Non-negative costs imply that this enumerated
 union costs no more than the optimum; feasibility implies it cannot cost less
 than the optimum.  Hence the selected pair is optimal.
 
-## 3. Computational boundary
+## 3. Implementation-faithful complexity account
 
-### Theorem 5 (NP-completeness)
+Let `n` be the number of origins, `g_l` the peak instantaneous frontier size
+for literal `l`, and `I_l` the total number of successful insertions including
+entries later dominated.  For rule `r` with body size `k_r` and head `h_r`, a
+pass streams at most `product_l g_l` premise tuples.  Building a candidate
+union takes `O(k_r n)` set work; insertion scans up to `g_h_r` head supports,
+with `O(n)` subset work each.  A coarse pass bound is therefore
+
+```
+O(n * sum_r ((k_r + g_h_r) * product_{l in body(r)} g_l)).
+```
+
+At most `1 + sum_l I_l` productive-plus-final passes occur, and target pairing
+costs `O(n g_p g_notp)`.  The implementation materializes sorted premise lists
+but streams their Cartesian product.  It does not cache all unions or costs.
+Peak support storage is `O(n sum_l g_l)` plus `O(k_r n)` transient tuple and
+candidate space.  Each retained support stores one canonical backpointer to
+premise proof objects; the selected proofs are recursively expanded in JSON,
+so serialized proof size is a separate output/replay cost.  Peak and transient
+frontiers matter: `I_l` may exceed final frontier size, and a peak frontier can
+reach the largest powerset antichain.
+
+## 4. Computational boundary
+
+### Theorem 6 (NP-completeness)
 
 The decision problem “does a joint contradiction certificate of cost at most
 `B` exist?” is NP-complete, even with unit origin costs, an acyclic positive
@@ -106,9 +137,12 @@ Horn program, and one side of the contradiction supplied by a single base
 fact.  The result continues to hold when rule bodies are restricted to at most
 two literals.
 
-**Proof.**  Membership in NP follows because a selected origin set and two Horn
-derivations can be checked in polynomial time; equivalently, forward closure
-is polynomial in the finite program size.
+**Proof.**  Membership in NP uses the selected origin set as the certificate.  Check its
+encoded cost, enable exactly the facts whose supports are contained in it, and
+compute ordinary finite Horn closure in time polynomial in the explicit input.
+Accept iff both targets occur.  A compact proof DAG is an optional witness; an
+eagerly expanded proof tree need not be polynomially bounded and is not used
+for membership.
 
 For hardness, reduce SET COVER.  Given universe `E={e_1,...,e_m}`, sets
 `S_1,...,S_n`, and bound `k`, create one unit-cost origin `x_j` and base fact
@@ -130,9 +164,9 @@ This theorem concerns the general finite provenance language.  It does not
 make the earlier two-support threshold fragment hard; that fragment has the
 singleton/pair closed form proved in `selection.md`.
 
-## 4. Baselines and tight guarantees
+## 5. Baselines and tight guarantees
 
-### Theorem 6 (independent-side two-approximation)
+### Theorem 7 (conditional independent-side factor-two cost bound)
 
 Let `A` be a minimum-cost support for `p` and `B` a minimum-cost support for
 `not:p`, chosen independently.  Then `w(A union B) <= 2 OPT`, where `OPT` is
@@ -147,7 +181,7 @@ Therefore
 w(A union B) <= w(A)+w(B) <= 2 w(U*) = 2 OPT.
 ```
 
-### Theorem 7 (the factor two is tight)
+### Theorem 8 (the factor two is tight)
 
 For every `k>=2`, there is a unit-cost instance on which independent-side
 selection costs `2k`, while the joint optimum costs `k+1`.
@@ -160,18 +194,19 @@ for both sides and costs `k+1`.  No smaller support exists by construction.
 The ratio `2k/(k+1)` tends to two.  `make_tight_two_approx` constructs exactly
 this family, and the retained finite checks cover `k` through 128.
 
-### Theorem 8 (deletion is inclusion-minimal but can be arbitrarily bad)
+### Theorem 9 (deletion is inclusion-minimal but can be arbitrarily bad)
 
-For the fixed Horn selection predicate, repeated successful single-origin
-deletion returns an inclusion-minimal certificate.  Nevertheless, its cost
-ratio to a minimum certificate is unbounded, even with unit costs.
+For the fixed Horn selection predicate, fixed-order one-pass deletion returns
+an inclusion-minimal certificate.  Nevertheless, its cost ratio to a minimum
+certificate is unbounded, even with unit costs.
 
 **Proof.**  The predicate is upward closed: adding origins can only enable more
-base facts and positive-Horn consequences.  Suppose the deletion procedure
-stops at `S` but a proper subset `T subset S` is contradictory.  Choose
-`x in S\T`.  Because `T subseteq S\{x}` and the predicate is upward closed,
-`S\{x}` is contradictory, contradicting termination.  Hence the output is
-inclusion-minimal.
+base facts and positive-Horn consequences.  Let the one-pass scan finish at `S`.  If retained `x` had contradictory
+`S\{x}`, then when `x` was tested the current set `C` contained `S`, so
+`S\{x} subseteq C\{x}`; upward closure would have removed `x`.  Thus no
+retained origin is removable.  Any proper contradictory subset would omit
+some `x` and, by upward closure, make `S\{x}` contradictory.  Hence the output
+is inclusion-minimal.
 
 For the gap, use origins `y,x_1,...,x_n`.  Both `p` and `not:p` have a proof
 supported by `{y}` and another proof supported by `{x_1,...,x_n}`.  Start from
@@ -180,7 +215,7 @@ remains.  No `x_i` can then be deleted, so the result has cost `n`, is
 inclusion-minimal, and the optimum `{y}` costs one.  The ratio is `n`.
 `make_deletion_gap` checks this family through `n=128`.
 
-## 5. Version identity and source anchors
+## 6. Version identity and source anchors
 
 A source anchor is replayable only when its retained text occurs exactly once
 in the declared snapshot excerpt.  A change origin names two tagged snapshots
@@ -199,7 +234,7 @@ seeds.  Therefore the experiment validates extraction, provenance sharing,
 optimization, and replay; it does not estimate real defect prevalence or
 claim that every source change is a bug.
 
-## 6. Relationship to the re-mined threshold counterexample
+## 7. Relationship to the re-mined threshold counterexample
 
 The fixed Horn predicate in this file is monotone in selected origins.  The
 older re-mined threshold predicate in `selection.md` is different because

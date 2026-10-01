@@ -3,6 +3,7 @@
   "cases": 825,
   "certificate_cases": 704,
   "exact_oracle_discrepancies": 0,
+  "instance_recovery": "full serialized problems retained in joint-oracle-instances.jsonl; seed and generator are also recorded",
   "maximum_frontier_entries": 24,
   "origin_range": [
     4,

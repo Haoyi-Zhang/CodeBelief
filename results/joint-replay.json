@@ -7,65 +7,74 @@
   "records": [
     {
       "case": "public-cjson-chain-code-heavy",
-      "cost": 7,
-      "oracle_cost": 7,
-      "selected_origins": 3,
-      "status": "certificate"
-    },
-    {
-      "case": "public-cjson-chain-history-heavy",
-      "cost": 5,
-      "oracle_cost": 5,
-      "selected_origins": 3,
-      "status": "certificate"
-    },
-    {
-      "case": "public-cjson-chain-unit",
-      "cost": 3,
-      "oracle_cost": 3,
-      "selected_origins": 3,
-      "status": "certificate"
-    },
-    {
-      "case": "public-cjson-choice-code-heavy",
-      "cost": 5,
-      "oracle_cost": 5,
-      "selected_origins": 3,
-      "status": "certificate"
-    },
-    {
-      "case": "public-cjson-choice-history-heavy",
-      "cost": 4,
-      "oracle_cost": 4,
+      "cost": 8,
+      "oracle_cost": 8,
+      "oracle_witness_origins": 4,
       "selected_origins": 4,
       "status": "certificate"
     },
     {
+      "case": "public-cjson-chain-history-heavy",
+      "cost": 7,
+      "oracle_cost": 7,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
+      "status": "certificate"
+    },
+    {
+      "case": "public-cjson-chain-unit",
+      "cost": 4,
+      "oracle_cost": 4,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
+      "status": "certificate"
+    },
+    {
+      "case": "public-cjson-choice-code-heavy",
+      "cost": 8,
+      "oracle_cost": 8,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
+      "status": "certificate"
+    },
+    {
+      "case": "public-cjson-choice-history-heavy",
+      "cost": 6,
+      "oracle_cost": 6,
+      "oracle_witness_origins": 5,
+      "selected_origins": 5,
+      "status": "certificate"
+    },
+    {
       "case": "public-cjson-choice-unit",
-      "cost": 3,
-      "oracle_cost": 3,
-      "selected_origins": 3,
+      "cost": 4,
+      "oracle_cost": 4,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
       "status": "certificate"
     },
     {
       "case": "public-cjson-direct-code-heavy",
-      "cost": 7,
-      "oracle_cost": 7,
-      "selected_origins": 3,
+      "cost": 8,
+      "oracle_cost": 8,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
       "status": "certificate"
     },
     {
       "case": "public-cjson-direct-history-heavy",
-      "cost": 5,
-      "oracle_cost": 5,
-      "selected_origins": 3,
+      "cost": 7,
+      "oracle_cost": 7,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
       "status": "certificate"
     },
     {
       "case": "public-cjson-direct-unit",
-      "cost": 3,
-      "oracle_cost": 3,
-      "selected_origins": 3,
+      "cost": 4,
+      "oracle_cost": 4,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
       "status": "certificate"
     },
     {
@@ -100,65 +109,74 @@
     },
     {
       "case": "public-inih-chain-code-heavy",
-      "cost": 7,
-      "oracle_cost": 7,
-      "selected_origins": 3,
-      "status": "certificate"
-    },
-    {
-      "case": "public-inih-chain-history-heavy",
-      "cost": 5,
-      "oracle_cost": 5,
-      "selected_origins": 3,
-      "status": "certificate"
-    },
-    {
-      "case": "public-inih-chain-unit",
-      "cost": 3,
-      "oracle_cost": 3,
-      "selected_origins": 3,
-      "status": "certificate"
-    },
-    {
-      "case": "public-inih-choice-code-heavy",
-      "cost": 5,
-      "oracle_cost": 5,
-      "selected_origins": 3,
-      "status": "certificate"
-    },
-    {
-      "case": "public-inih-choice-history-heavy",
-      "cost": 4,
-      "oracle_cost": 4,
+      "cost": 8,
+      "oracle_cost": 8,
+      "oracle_witness_origins": 4,
       "selected_origins": 4,
       "status": "certificate"
     },
     {
+      "case": "public-inih-chain-history-heavy",
+      "cost": 7,
+      "oracle_cost": 7,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
+      "status": "certificate"
+    },
+    {
+      "case": "public-inih-chain-unit",
+      "cost": 4,
+      "oracle_cost": 4,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
+      "status": "certificate"
+    },
+    {
+      "case": "public-inih-choice-code-heavy",
+      "cost": 8,
+      "oracle_cost": 8,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
+      "status": "certificate"
+    },
+    {
+      "case": "public-inih-choice-history-heavy",
+      "cost": 6,
+      "oracle_cost": 6,
+      "oracle_witness_origins": 5,
+      "selected_origins": 5,
+      "status": "certificate"
+    },
+    {
       "case": "public-inih-choice-unit",
-      "cost": 3,
-      "oracle_cost": 3,
-      "selected_origins": 3,
+      "cost": 4,
+      "oracle_cost": 4,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
       "status": "certificate"
     },
     {
       "case": "public-inih-direct-code-heavy",
-      "cost": 7,
-      "oracle_cost": 7,
-      "selected_origins": 3,
+      "cost": 8,
+      "oracle_cost": 8,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
       "status": "certificate"
     },
     {
       "case": "public-inih-direct-history-heavy",
-      "cost": 5,
-      "oracle_cost": 5,
-      "selected_origins": 3,
+      "cost": 7,
+      "oracle_cost": 7,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
       "status": "certificate"
     },
     {
       "case": "public-inih-direct-unit",
-      "cost": 3,
-      "oracle_cost": 3,
-      "selected_origins": 3,
+      "cost": 4,
+      "oracle_cost": 4,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
       "status": "certificate"
     },
     {
@@ -193,65 +211,74 @@
     },
     {
       "case": "public-mjson-chain-code-heavy",
-      "cost": 7,
-      "oracle_cost": 7,
-      "selected_origins": 3,
-      "status": "certificate"
-    },
-    {
-      "case": "public-mjson-chain-history-heavy",
-      "cost": 5,
-      "oracle_cost": 5,
-      "selected_origins": 3,
-      "status": "certificate"
-    },
-    {
-      "case": "public-mjson-chain-unit",
-      "cost": 3,
-      "oracle_cost": 3,
-      "selected_origins": 3,
-      "status": "certificate"
-    },
-    {
-      "case": "public-mjson-choice-code-heavy",
-      "cost": 5,
-      "oracle_cost": 5,
-      "selected_origins": 3,
-      "status": "certificate"
-    },
-    {
-      "case": "public-mjson-choice-history-heavy",
-      "cost": 4,
-      "oracle_cost": 4,
+      "cost": 8,
+      "oracle_cost": 8,
+      "oracle_witness_origins": 4,
       "selected_origins": 4,
       "status": "certificate"
     },
     {
+      "case": "public-mjson-chain-history-heavy",
+      "cost": 7,
+      "oracle_cost": 7,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
+      "status": "certificate"
+    },
+    {
+      "case": "public-mjson-chain-unit",
+      "cost": 4,
+      "oracle_cost": 4,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
+      "status": "certificate"
+    },
+    {
+      "case": "public-mjson-choice-code-heavy",
+      "cost": 8,
+      "oracle_cost": 8,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
+      "status": "certificate"
+    },
+    {
+      "case": "public-mjson-choice-history-heavy",
+      "cost": 6,
+      "oracle_cost": 6,
+      "oracle_witness_origins": 5,
+      "selected_origins": 5,
+      "status": "certificate"
+    },
+    {
       "case": "public-mjson-choice-unit",
-      "cost": 3,
-      "oracle_cost": 3,
-      "selected_origins": 3,
+      "cost": 4,
+      "oracle_cost": 4,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
       "status": "certificate"
     },
     {
       "case": "public-mjson-direct-code-heavy",
-      "cost": 7,
-      "oracle_cost": 7,
-      "selected_origins": 3,
+      "cost": 8,
+      "oracle_cost": 8,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
       "status": "certificate"
     },
     {
       "case": "public-mjson-direct-history-heavy",
-      "cost": 5,
-      "oracle_cost": 5,
-      "selected_origins": 3,
+      "cost": 7,
+      "oracle_cost": 7,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
       "status": "certificate"
     },
     {
       "case": "public-mjson-direct-unit",
-      "cost": 3,
-      "oracle_cost": 3,
-      "selected_origins": 3,
+      "cost": 4,
+      "oracle_cost": 4,
+      "oracle_witness_origins": 4,
+      "selected_origins": 4,
       "status": "certificate"
     },
     {

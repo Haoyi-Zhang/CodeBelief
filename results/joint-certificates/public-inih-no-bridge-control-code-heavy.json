@@ -3,16 +3,16 @@
   "problem": {
     "facts": [
       {
-        "literal": "not:policy:inih:consume-overlong-line@r58",
-        "name": "before-versioned",
+        "literal": "signal:inih:before",
+        "name": "before-signal",
         "origins": [
           "before-feature",
           "history-change"
         ]
       },
       {
-        "literal": "policy:inih:consume-overlong-line@r59",
-        "name": "after-versioned",
+        "literal": "signal:inih:after",
+        "name": "after-signal",
         "origins": [
           "after-feature",
           "history-change"
@@ -35,7 +35,10 @@
         "id": "before-feature",
         "kind": "code",
         "metadata": {
-          "tag": "r58"
+          "file": "inputs/public/inih/r58/ini_parse_stream_excerpt.c",
+          "host": "inih",
+          "project": "inih",
+          "snapshot": "r58"
         },
         "path": "inputs/public/inih/r58/ini_parse_stream_excerpt.c",
         "weight": 3
@@ -45,7 +48,10 @@
         "id": "after-feature",
         "kind": "code",
         "metadata": {
-          "tag": "r59"
+          "file": "inputs/public/inih/r59/ini_parse_stream_excerpt.c",
+          "host": "inih",
+          "project": "inih",
+          "snapshot": "r59"
         },
         "path": "inputs/public/inih/r59/ini_parse_stream_excerpt.c",
         "weight": 3
@@ -55,7 +61,10 @@
         "id": "before-context",
         "kind": "code",
         "metadata": {
-          "tag": "r58"
+          "file": "inputs/public/inih/r58/ini_parse_stream_excerpt.c",
+          "host": "inih",
+          "project": "inih",
+          "snapshot": "r58"
         },
         "path": "inputs/public/inih/r58/ini_parse_stream_excerpt.c",
         "weight": 3
@@ -65,7 +74,10 @@
         "id": "after-context",
         "kind": "code",
         "metadata": {
-          "tag": "r59"
+          "file": "inputs/public/inih/r59/ini_parse_stream_excerpt.c",
+          "host": "inih",
+          "project": "inih",
+          "snapshot": "r59"
         },
         "path": "inputs/public/inih/r59/ini_parse_stream_excerpt.c",
         "weight": 3
@@ -75,7 +87,10 @@
         "id": "shared-code",
         "kind": "code",
         "metadata": {
-          "tag": "r59"
+          "file": "inputs/public/inih/r59/ini_parse_stream_excerpt.c",
+          "host": "inih",
+          "project": "inih",
+          "snapshot": "r59"
         },
         "path": "inputs/public/inih/r59/ini_parse_stream_excerpt.c",
         "weight": 3
@@ -86,11 +101,13 @@
         "kind": "change",
         "metadata": {
           "after_anchor": "char abyss[16];  /* Used to consume input when a line is too long. */",
-          "after_path": "inputs/public/inih/r59/ini_parse_stream_excerpt.c",
-          "after_tag": "r59",
+          "after_file": "inputs/public/inih/r59/ini_parse_stream_excerpt.c",
+          "after_origin": "after-feature",
+          "after_snapshot": "r59",
           "before_anchor": "if (max_line >= INI_MAX_LINE)\n                break;",
-          "before_path": "inputs/public/inih/r58/ini_parse_stream_excerpt.c",
-          "before_tag": "r58",
+          "before_file": "inputs/public/inih/r58/ini_parse_stream_excerpt.c",
+          "before_origin": "before-feature",
+          "before_snapshot": "r58",
           "host": "inih",
           "project": "inih"
         },
@@ -102,14 +119,37 @@
         "id": "entity-bridge",
         "kind": "bridge",
         "metadata": {
-          "assumption": "the named routine denotes one evolving entity across the two tagged snapshots"
+          "after_origin": "after-feature",
+          "after_snapshot": "r59",
+          "assumption": "the referenced routine denotes one evolving entity across the two tagged snapshots",
+          "before_origin": "before-feature",
+          "before_snapshot": "r58",
+          "host": "inih",
+          "project": "inih"
         },
         "path": null,
         "weight": 1
       }
     ],
     "positive": "policy:inih:consume-overlong-line",
-    "rules": []
+    "rules": [
+      {
+        "body": [
+          "signal:inih:before",
+          "bridge:inih"
+        ],
+        "head": "not:policy:inih:consume-overlong-line",
+        "name": "before-to-negative-policy"
+      },
+      {
+        "body": [
+          "signal:inih:after",
+          "bridge:inih"
+        ],
+        "head": "policy:inih:consume-overlong-line",
+        "name": "after-to-positive-policy"
+      }
+    ]
   },
   "schema": "joint-contradiction-certificate-v1",
   "solution": {

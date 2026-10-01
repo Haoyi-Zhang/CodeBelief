@@ -12,6 +12,14 @@ from itertools import product
 from typing import Iterable, Mapping, Sequence
 
 
+def _validate_literal(literal: str) -> None:
+    """Validate the canonical single-prefix strong-negation encoding."""
+    if type(literal) is not str or not literal or any(ch.isspace() for ch in literal):
+        raise ValueError("literals must be nonempty whitespace-free strings")
+    if literal == "not:" or literal.startswith("not:not:"):
+        raise ValueError("literals use at most one leading not: prefix")
+
+
 @dataclass(frozen=True, order=True)
 class Origin:
     identifier: str
@@ -32,6 +40,9 @@ class Origin:
             raise ValueError("path and anchor must be supplied together")
         if self.anchor == "":
             raise ValueError("empty source anchor")
+        keys = [key for key, _ in self.metadata]
+        if len(keys) != len(set(keys)) or any(not key for key in keys):
+            raise ValueError("origin metadata keys must be unique and nonempty")
 
     @property
     def meta(self) -> dict[str, str]:
@@ -45,8 +56,9 @@ class Fact:
     origins: tuple[str, ...]
 
     def __post_init__(self) -> None:
-        if not self.name or not self.literal:
-            raise ValueError("facts require names and literals")
+        if not self.name:
+            raise ValueError("facts require names")
+        _validate_literal(self.literal)
         if len(set(self.origins)) != len(self.origins):
             raise ValueError("duplicate origin in fact")
 
@@ -58,8 +70,11 @@ class Rule:
     head: str
 
     def __post_init__(self) -> None:
-        if not self.name or not self.head:
-            raise ValueError("rules require names and a head")
+        if not self.name:
+            raise ValueError("rules require names")
+        _validate_literal(self.head)
+        for literal in self.body:
+            _validate_literal(literal)
         if len(set(self.body)) != len(self.body):
             raise ValueError("duplicate body literal")
         if self.head in self.body:
@@ -78,8 +93,10 @@ class Problem:
     metadata: tuple[tuple[str, str], ...] = ()
 
     def __post_init__(self) -> None:
-        if not self.name or not self.positive or not self.negative:
-            raise ValueError("problem requires identity and target literals")
+        if not self.name:
+            raise ValueError("problem requires an identity")
+        _validate_literal(self.positive)
+        _validate_literal(self.negative)
         if self.negative != negate(self.positive):
             raise ValueError("targets must be a strong-negation pair")
         origin_ids = [o.identifier for o in self.origins]
@@ -93,6 +110,9 @@ class Problem:
             raise ValueError("duplicate rule name")
         if set(fact_names) & set(rule_names):
             raise ValueError("fact and rule names must be disjoint")
+        metadata_keys = [key for key, _ in self.metadata]
+        if len(metadata_keys) != len(set(metadata_keys)) or any(not key for key in metadata_keys):
+            raise ValueError("problem metadata keys must be unique and nonempty")
         known = set(origin_ids)
         for fact in self.facts:
             if not set(fact.origins) <= known:
@@ -137,8 +157,17 @@ class Solution:
 
 
 def negate(literal: str) -> str:
+    """Return the canonical syntactic strong opposite of ``literal``.
+
+    Exactly one leading ``not:`` prefix is permitted.  Consequently the
+    operation is an involution, including when the ordered target pair is
+    supplied in the reverse orientation.
+    """
+    _validate_literal(literal)
     if literal.startswith("not:"):
-        return literal[4:]
+        opposite = literal[4:]
+        _validate_literal(opposite)
+        return opposite
     return "not:" + literal
 
 
@@ -177,10 +206,14 @@ def derive_antichains(problem: Problem, *, max_frontier_entries: int = 100_000) 
     cap turns pathological inputs into an explicit error rather than resource
     exhaustion.
     """
+    if type(max_frontier_entries) is not int or max_frontier_entries < 0:
+        raise ValueError("max_frontier_entries must be a non-negative integer")
     frontiers: dict[str, dict[frozenset[str], Proof]] = {}
     for fact in sorted(problem.facts):
         proof = Proof(fact.literal, frozenset(fact.origins), fact.name)
-        _insert_antichain(problem, frontiers.setdefault(fact.literal, {}), proof)
+        if _insert_antichain(problem, frontiers.setdefault(fact.literal, {}), proof):
+            if sum(len(v) for v in frontiers.values()) > max_frontier_entries:
+                raise RuntimeError("provenance frontier cap exceeded during fact initialization")
     iterations = 0
     while True:
         iterations += 1
@@ -222,7 +255,7 @@ def solve_exact(problem: Problem, *, max_frontier_entries: int = 100_000) -> Sol
 
 
 def independent_sides(problem: Problem) -> Solution | None:
-    """Choose a cheapest proof for each side independently (a tight 2-approximation)."""
+    """Choose exact one-side minima; their union obeys the tight factor-two cost bound."""
     frontiers, iterations = derive_antichains(problem)
     if problem.positive not in frontiers or problem.negative not in frontiers:
         return None

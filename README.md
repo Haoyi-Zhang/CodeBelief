@@ -14,20 +14,20 @@ python3 reproduce.py --out ../contradiction-reproduction
 
 The output directory must be empty. The runner uses one worker and one available CPU core. Each child receives a 512 MiB address-space limit, a 30/31-second CPU limit, and a 32-second wall limit. It executes:
 
-1. 35 unit-test methods;
+1. 62 unit-test methods;
 2. the original selection-semantics pilot and seven exact population chunks;
 3. 6,452 ordinary-Horn Boolean-oracle checks;
 4. the re-mined/pinned formula families and independent replay;
 5. 45 public-source certificate configurations;
 6. 825 weighted small-instance exact/oracle comparisons;
-7. tight approximation and deletion families;
+7. the conditional factor-two and adverse deletion families;
 8. controlled frontier scaling;
 9. the producer-independent source/certificate consumer; and
 10. deterministic report generation.
 
-On a full successful run, every file named by `results/expected-files.json` is regenerated and compared byte for byte with the retained evidence. There are 81 deterministic files. Measurements and logs are not expected to be byte-identical.
+On a full successful run, every file named by `results/expected-files.json` is regenerated and compared byte for byte with the retained evidence. There are 85 deterministic files. Measurements and logs are not expected to be byte-identical.
 
-Interrupted runs can resume only from a valid retained measurement file:
+Interrupted runs can resume only from a valid retained measurement file. A recorded zero exit code is not enough: before skipping a task, the runner revalidates every declared output byte-for-byte against retained evidence and also validates declared dependencies:
 
 ```sh
 python3 reproduce.py --out ../contradiction-reproduction --resume
@@ -50,7 +50,7 @@ The focused commands are useful for inspection; the full runner is the authorita
 
 The producer maintains every inclusion-minimal proof support. It then examines the Cartesian product of the two opposed target frontiers and chooses a minimum-cost union with deterministic tie breaking. The brute-force oracle uses a different representation: origin selections and derived literal sets are integer masks. It visits every subset within the declared 20-origin guard and computes fixed Horn closure independently of the antichain implementation.
 
-`src/joint_benchmark.py` constructs the public-host, oracle, formula-family, and scaling campaigns. `src/joint_replay.py` and the top-level `replay_joint.py` are a separate consumer path. The consumer verifies path containment, unique source anchors, change endpoints, bridge records, proof trees, selected union, cost, fixed closure, negative controls, and exhaustive optimality for the bounded public cases. It does not import `src.joint`.
+`src/joint_benchmark.py` constructs the public-host, oracle, formula-family, and scaling campaigns. `src/joint_replay.py` and the top-level `replay_joint.py` are a separately implemented consumer path. The consumer requires canonical relative POSIX paths; binds every anchor to its declared project, snapshot, and file; checks distinct change endpoints and identifier/embedded-record agreement; validates bridge scope; replays proof trees, closure, union, and cost; and checks canonical, known, feasible, optimum `oracle_selected` witnesses for bounded positive cases. The entry point records at runtime whether `src.joint` is present in `sys.modules`; the retained run reports false.
 
 The older `src/model.py`, `src/experiment.py`, `src/replay.py`, and `verify.py` preserve the moving-threshold selection-semantics boundary and ordinary-Horn finite checks. They remain scientifically relevant because they demonstrate that deleting observations while re-inferring a rule changes the predicate.
 
@@ -60,14 +60,14 @@ The older `src/model.py`, `src/experiment.py`, `src/replay.py`, and `verify.py` 
 |---|---|
 | Weighted oracle | 825 cases over 4--14 origins; 704 certificates; 0 exact/oracle discrepancies; 0 approximation-bound violations |
 | Tagged public hosts | 45 configurations; 27 seeded positives; 18 negative controls; 0 control false positives; 6 tagged snapshots from 3 projects |
-| Tight factor-two family | parameter through 128; largest ratio 256/129 = 1.984496... |
+| Conditional factor-two family | after exact one-side minima are available, parameter through 128; largest ratio 256/129 = 1.984496... |
 | Adverse deletion family | parameter through 128; ratio 128; every output inclusion-minimal |
 | Scaling family | 256 alternatives per side; 1,024 origins; 65,536 candidate support pairs |
 | Moving-predicate census | 32,790 configurations and 3,359,220 subset judgments |
 | Ordinary-Horn census | 6,452 formulas; 0 Boolean-oracle discrepancies |
-| Tests | 35 methods, including anchor/path/cost/proof mutation rejection |
+| Tests | 62 methods, including true bridge ablation, Cartesian-product frontier comparison, path/snapshot/endpoint/identifier checks, oracle-witness checks, and resume corruption recovery |
 
-`results/joint-oracle-cases.jsonl`, `joint-public-cases.jsonl`, `joint-theory.csv`, and `joint-scaling.csv` contain case-level data. `joint-certificates/` contains all 45 public case documents. `results/joint-replay.json` records that the producer module was not imported and that external independent review is false.
+`results/joint-oracle-instances.jsonl` retains each generated weighted problem (origins, weights, facts, rules, and target) in addition to `joint-oracle-cases.jsonl` metrics. `joint-public-cases.jsonl`, `joint-theory.csv`, and `joint-scaling.csv` contain the other case-level data. `joint-certificates/` contains all 45 public case documents. `results/joint-replay.json` records that the producer module was not imported and that external independent review is false.
 
 ## Public source inputs and licenses
 
@@ -81,7 +81,7 @@ The matching license notices are retained under `inputs/public/licenses/`. The e
 
 ## Proofs and evidence ledgers
 
-`proofs/joint.md` gives complete ordinary mathematical arguments for termination, soundness, completeness, exact joint optimization, NP-completeness, the tight 2-approximation, and the unbounded deletion gap. `proofs/selection.md` preserves the re-mined/pinned boundary. `proofs/horn.md` and `proofs/scope.md` state the auxiliary finite-Horn and interpretation boundaries.
+`proofs/joint.md` gives complete ordinary mathematical arguments for termination, soundness, the fixed-point subset-representative lemma, completeness, exact joint optimization, NP-completeness, the conditional tight factor-two cost bound after exact one-side minima are available, and the unbounded deletion gap. `proofs/selection.md` preserves the re-mined/pinned boundary. `proofs/horn.md` and `proofs/scope.md` state the auxiliary finite-Horn and interpretation boundaries.
 
 `claim_evidence_ledger.csv` maps every material manuscript claim to its proof, checker, raw result, figure/table, maturity, and boundary. `external_resources.csv` records public inputs, licenses, scholarly sources used for scope, and official-rule access holds.
 

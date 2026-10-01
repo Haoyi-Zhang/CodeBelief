@@ -2,6 +2,7 @@
 """Replay every retained public-host joint certificate without producer imports."""
 import argparse
 import json
+import sys
 from pathlib import Path
 from src.joint_replay import ReplayError, replay_certificate
 
@@ -25,7 +26,7 @@ def main():
             'positive_certificates':sum(r['status']=='certificate' for r in records),
             'negative_controls':sum(r['status']=='no-contradiction-certificate' for r in records),
             'records':records,
-            'producer_module_imported':False,
+            'producer_module_imported':'src.joint' in sys.modules,
             'external_independent_review':False,
         }
         text=json.dumps(report,indent=2,sort_keys=True)+'\n'

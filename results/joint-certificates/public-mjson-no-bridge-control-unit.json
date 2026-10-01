@@ -3,16 +3,16 @@
   "problem": {
     "facts": [
       {
-        "literal": "not:policy:mjson:place-controlled-integer-loop@1.2.6",
-        "name": "before-versioned",
+        "literal": "signal:mjson:before",
+        "name": "before-signal",
         "origins": [
           "before-feature",
           "history-change"
         ]
       },
       {
-        "literal": "policy:mjson:place-controlled-integer-loop@1.2.7",
-        "name": "after-versioned",
+        "literal": "signal:mjson:after",
+        "name": "after-signal",
         "origins": [
           "after-feature",
           "history-change"
@@ -35,7 +35,10 @@
         "id": "before-feature",
         "kind": "code",
         "metadata": {
-          "tag": "1.2.6"
+          "file": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
+          "host": "mjson",
+          "project": "mjson",
+          "snapshot": "1.2.6"
         },
         "path": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
         "weight": 1
@@ -45,7 +48,10 @@
         "id": "after-feature",
         "kind": "code",
         "metadata": {
-          "tag": "1.2.7"
+          "file": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+          "host": "mjson",
+          "project": "mjson",
+          "snapshot": "1.2.7"
         },
         "path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
         "weight": 1
@@ -55,7 +61,10 @@
         "id": "before-context",
         "kind": "code",
         "metadata": {
-          "tag": "1.2.6"
+          "file": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
+          "host": "mjson",
+          "project": "mjson",
+          "snapshot": "1.2.6"
         },
         "path": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
         "weight": 1
@@ -65,7 +74,10 @@
         "id": "after-context",
         "kind": "code",
         "metadata": {
-          "tag": "1.2.7"
+          "file": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+          "host": "mjson",
+          "project": "mjson",
+          "snapshot": "1.2.7"
         },
         "path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
         "weight": 1
@@ -75,7 +87,10 @@
         "id": "shared-code",
         "kind": "code",
         "metadata": {
-          "tag": "1.2.7"
+          "file": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+          "host": "mjson",
+          "project": "mjson",
+          "snapshot": "1.2.7"
         },
         "path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
         "weight": 1
@@ -86,11 +101,13 @@
         "kind": "change",
         "metadata": {
           "after_anchor": "for (i = 0, t = mul; t >= 1.0 && s + n < (int) sizeof(buf); i++)",
-          "after_path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
-          "after_tag": "1.2.7",
+          "after_file": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+          "after_origin": "after-feature",
+          "after_snapshot": "1.2.7",
           "before_anchor": "for (i = 0, t = mul; d >= 1.0 && s + n < (int) sizeof(buf); i++)",
-          "before_path": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
-          "before_tag": "1.2.6",
+          "before_file": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
+          "before_origin": "before-feature",
+          "before_snapshot": "1.2.6",
           "host": "mjson",
           "project": "mjson"
         },
@@ -102,14 +119,37 @@
         "id": "entity-bridge",
         "kind": "bridge",
         "metadata": {
-          "assumption": "the named routine denotes one evolving entity across the two tagged snapshots"
+          "after_origin": "after-feature",
+          "after_snapshot": "1.2.7",
+          "assumption": "the referenced routine denotes one evolving entity across the two tagged snapshots",
+          "before_origin": "before-feature",
+          "before_snapshot": "1.2.6",
+          "host": "mjson",
+          "project": "mjson"
         },
         "path": null,
         "weight": 1
       }
     ],
     "positive": "policy:mjson:place-controlled-integer-loop",
-    "rules": []
+    "rules": [
+      {
+        "body": [
+          "signal:mjson:before",
+          "bridge:mjson"
+        ],
+        "head": "not:policy:mjson:place-controlled-integer-loop",
+        "name": "before-to-negative-policy"
+      },
+      {
+        "body": [
+          "signal:mjson:after",
+          "bridge:mjson"
+        ],
+        "head": "policy:mjson:place-controlled-integer-loop",
+        "name": "after-to-positive-policy"
+      }
+    ]
   },
   "schema": "joint-contradiction-certificate-v1",
   "solution": {

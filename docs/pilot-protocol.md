@@ -18,7 +18,7 @@ Item 3 falsified the intended substantial optimization contribution. The project
 * H2: independent minimum proofs never exceed twice the exact joint-union cost.
 * H3: removing an explicit bridge or one complete target side yields no certificate.
 * H4: declared weight profiles can change the selected union while preserving exactness.
-* H5: constructive families realize the proved tight factor-two limit and unbounded deletion gap.
+* H5: constructive families realize the proved conditional tight factor-two limit and unbounded deletion gap.
 * H6: a separately implemented consumer accepts every valid retained certificate and rejects specified mutations.
 
 ### Fixed inputs and parameters
@@ -40,7 +40,7 @@ No parameter was tuned against a held-out test set. The campaigns are determinis
 * exact antichain joint solver;
 * exhaustive bit-mask origin-subset oracle;
 * independently minimized target proofs;
-* repeated successful deletion in a declared order;
+* fixed-order one-pass deletion under the upward-closed predicate;
 * no-bridge and single-side controls;
 * inherited re-mined and pinned predicates.
 
@@ -48,8 +48,8 @@ No external reducer or solver is executed, so no runtime superiority over ddmin,
 
 ### Failure criteria
 
-The campaign fails on any exact/oracle existence or cost discrepancy, any factor-two violation, any positive/control status mismatch, any invalid anchor/path/change/bridge/proof/union/cost, any mutation accepted by the consumer, any deterministic-output mismatch, any test failure, or any resource-limit exit.
+The campaign fails on any exact/oracle existence or cost discrepancy, any conditional factor-two cost-bound violation, any positive/control status mismatch, any invalid anchor/path/change/bridge/proof/union/cost, any mutation accepted by the consumer, any deterministic-output mismatch, any test failure, or any resource-limit exit.
 
 ## Retained outcome
 
-All 825 weighted oracle instances agree, all 704 positive cases respect the approximation bound, all 27 public positive configurations replay, all 18 controls remain negative, and all formula-family checks pass. Controlled scaling reaches 65,536 final support pairs. The outcome validates the locked finite claims only.
+All 825 weighted oracle instances agree, all 704 positive cases respect the conditional factor-two cost bound, all 27 public positive configurations replay, all 18 controls remain negative, and all formula-family checks pass. Controlled scaling reaches 65,536 final support pairs. The outcome validates the locked finite claims only.

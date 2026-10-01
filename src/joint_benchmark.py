@@ -70,22 +70,44 @@ HOSTS = {
 }
 
 
-def _code(identifier: str, path: str, anchor: str, weight: int, **meta: str) -> Origin:
-    return Origin(identifier, "code", weight, path, anchor, tuple(sorted(meta.items())))
+def _code(identifier: str, path: str, anchor: str, weight: int, *, host_key: str, host: dict, snapshot: str) -> Origin:
+    metadata = {
+        "project": host["project"],
+        "host": host_key,
+        "snapshot": snapshot,
+        "file": path,
+    }
+    return Origin(identifier, "code", weight, path, anchor, tuple(sorted(metadata.items())))
 
 
 def _change(host_key: str, host: dict, weight: int) -> Origin:
+    """Create a change record with both ID references and embedded endpoint data."""
     meta = {
         "project": host["project"],
-        "before_tag": host["before_tag"],
-        "after_tag": host["after_tag"],
-        "before_path": host["before_path"],
-        "after_path": host["after_path"],
+        "host": host_key,
+        "before_origin": "before-feature",
+        "after_origin": "after-feature",
+        "before_snapshot": host["before_tag"],
+        "after_snapshot": host["after_tag"],
+        "before_file": host["before_path"],
+        "after_file": host["after_path"],
         "before_anchor": host["before_feature"],
         "after_anchor": host["after_feature"],
-        "host": host_key,
     }
     return Origin("history-change", "change", weight, metadata=tuple(sorted(meta.items())))
+
+
+def _bridge(host_key: str, host: dict, weight: int) -> Origin:
+    meta = {
+        "project": host["project"],
+        "host": host_key,
+        "before_origin": "before-feature",
+        "after_origin": "after-feature",
+        "before_snapshot": host["before_tag"],
+        "after_snapshot": host["after_tag"],
+        "assumption": "the referenced routine denotes one evolving entity across the two tagged snapshots",
+    }
+    return Origin("entity-bridge", "bridge", weight, metadata=tuple(sorted(meta.items())))
 
 
 def public_problem(host_key: str, variant: str, profile: str) -> Problem:
@@ -99,69 +121,83 @@ def public_problem(host_key: str, variant: str, profile: str) -> Problem:
         raise ValueError(profile)
     w = profiles[profile]
     origins = [
-        _code("before-feature", host["before_path"], host["before_feature"], w["code"], tag=host["before_tag"]),
-        _code("after-feature", host["after_path"], host["after_feature"], w["code"], tag=host["after_tag"]),
-        _code("before-context", host["before_path"], host["before_context"], w["code"], tag=host["before_tag"]),
-        _code("after-context", host["after_path"], host["after_context"], w["code"], tag=host["after_tag"]),
-        _code("shared-code", host["after_path"], host["shared_context"], w["code"], tag=host["after_tag"]),
+        _code("before-feature", host["before_path"], host["before_feature"], w["code"],
+              host_key=host_key, host=host, snapshot=host["before_tag"]),
+        _code("after-feature", host["after_path"], host["after_feature"], w["code"],
+              host_key=host_key, host=host, snapshot=host["after_tag"]),
+        _code("before-context", host["before_path"], host["before_context"], w["code"],
+              host_key=host_key, host=host, snapshot=host["before_tag"]),
+        _code("after-context", host["after_path"], host["after_context"], w["code"],
+              host_key=host_key, host=host, snapshot=host["after_tag"]),
+        _code("shared-code", host["after_path"], host["shared_context"], w["code"],
+              host_key=host_key, host=host, snapshot=host["after_tag"]),
         _change(host_key, host, w["change"]),
-        Origin("entity-bridge", "bridge", w["bridge"], metadata=(("assumption", "the named routine denotes one evolving entity across the two tagged snapshots"),)),
+        _bridge(host_key, host, w["bridge"]),
     ]
     p = host["policy"]
     np = "not:" + p
+    bridge_literal = f"bridge:{host_key}"
+    bridge_fact = Fact("entity-bridge-fact", bridge_literal, ("entity-bridge",))
     facts: list[Fact] = []
     rules: list[Rule] = []
 
-    if variant in {"direct", "chain"}:
-        facts.extend([
+    def direct_graph() -> tuple[list[Fact], list[Rule]]:
+        local_facts = [
+            bridge_fact,
             Fact("before-signal", f"signal:{host_key}:before", ("before-feature", "history-change")),
             Fact("after-signal", f"signal:{host_key}:after", ("after-feature", "history-change")),
-        ])
-        if variant == "direct":
-            rules.extend([
-                Rule("before-to-negative-policy", (f"signal:{host_key}:before",), np),
-                Rule("after-to-positive-policy", (f"signal:{host_key}:after",), p),
-            ])
-        else:
-            rules.extend([
-                Rule("before-stage-1", (f"signal:{host_key}:before",), f"legacy:{host_key}"),
-                Rule("before-stage-2", (f"legacy:{host_key}",), f"interpreted-old:{host_key}"),
-                Rule("before-to-negative-policy", (f"interpreted-old:{host_key}",), np),
-                Rule("after-stage-1", (f"signal:{host_key}:after",), f"current:{host_key}"),
-                Rule("after-stage-2", (f"current:{host_key}",), f"interpreted-new:{host_key}"),
-                Rule("after-to-positive-policy", (f"interpreted-new:{host_key}",), p),
-            ])
+        ]
+        local_rules = [
+            Rule("before-to-negative-policy", (f"signal:{host_key}:before", bridge_literal), np),
+            Rule("after-to-positive-policy", (f"signal:{host_key}:after", bridge_literal), p),
+        ]
+        return local_facts, local_rules
+
+    if variant == "direct":
+        facts, rules = direct_graph()
+    elif variant == "chain":
+        facts = [
+            bridge_fact,
+            Fact("before-signal", f"signal:{host_key}:before", ("before-feature", "history-change")),
+            Fact("after-signal", f"signal:{host_key}:after", ("after-feature", "history-change")),
+        ]
+        rules = [
+            Rule("before-stage-1", (f"signal:{host_key}:before",), f"legacy:{host_key}"),
+            Rule("before-stage-2", (f"legacy:{host_key}",), f"interpreted-old:{host_key}"),
+            Rule("before-to-negative-policy", (f"interpreted-old:{host_key}", bridge_literal), np),
+            Rule("after-stage-1", (f"signal:{host_key}:after",), f"current:{host_key}"),
+            Rule("after-stage-2", (f"current:{host_key}",), f"interpreted-new:{host_key}"),
+            Rule("after-to-positive-policy", (f"interpreted-new:{host_key}", bridge_literal), p),
+        ]
     elif variant == "choice":
-        # The private proofs are individually cheaper under unit weights.  A
-        # shared code/history interpretation is jointly cheaper, exercising
-        # union-aware minimization without calling the seed a real defect.
-        facts.extend([
+        # Every path is gated by the same explicit bridge.  Private paths use
+        # four version-local code anchors in their union; the shared path uses
+        # two code anchors plus the change record.  The profiles therefore
+        # exercise union-aware weighting without allowing a private bypass.
+        facts = [
+            bridge_fact,
             Fact("positive-private", f"private-positive:{host_key}", ("after-feature", "after-context")),
             Fact("negative-private", f"private-negative:{host_key}", ("before-feature", "before-context")),
-            Fact("positive-shared", f"shared-positive:{host_key}", ("shared-code", "history-change", "entity-bridge")),
-            Fact("negative-shared", f"shared-negative:{host_key}", ("shared-code", "history-change", "entity-bridge")),
-        ])
-        rules.extend([
-            Rule("positive-private-to-policy", (f"private-positive:{host_key}",), p),
-            Rule("negative-private-to-policy", (f"private-negative:{host_key}",), np),
-            Rule("positive-shared-to-policy", (f"shared-positive:{host_key}",), p),
-            Rule("negative-shared-to-policy", (f"shared-negative:{host_key}",), np),
-        ])
+            Fact("positive-shared", f"shared-positive:{host_key}",
+                 ("shared-code", "after-context", "history-change")),
+            Fact("negative-shared", f"shared-negative:{host_key}",
+                 ("shared-code", "after-context", "history-change")),
+        ]
+        rules = [
+            Rule("positive-private-to-policy", (f"private-positive:{host_key}", bridge_literal), p),
+            Rule("negative-private-to-policy", (f"private-negative:{host_key}", bridge_literal), np),
+            Rule("positive-shared-to-policy", (f"shared-positive:{host_key}", bridge_literal), p),
+            Rule("negative-shared-to-policy", (f"shared-negative:{host_key}", bridge_literal), np),
+        ]
     elif variant == "no-bridge-control":
-        facts.extend([
-            Fact("before-versioned", f"{np}@{host['before_tag']}", ("before-feature", "history-change")),
-            Fact("after-versioned", f"{p}@{host['after_tag']}", ("after-feature", "history-change")),
-        ])
-        # No rule erases the version indices; the unversioned target pair is absent.
+        # A true bridge ablation: keep the two snapshot facts, both target
+        # rules, all origins, and every non-bridge fact unchanged; remove only
+        # the fact that makes the bridge assumption available to the rules.
+        facts, rules = direct_graph()
+        facts = [fact for fact in facts if fact.name != bridge_fact.name]
     elif variant == "single-side-control":
-        facts.extend([
-            Fact("after-only-a", f"after-a:{host_key}", ("after-feature", "history-change")),
-            Fact("after-only-b", f"after-b:{host_key}", ("after-context", "entity-bridge")),
-        ])
-        rules.extend([
-            Rule("after-a-to-policy", (f"after-a:{host_key}",), p),
-            Rule("after-b-to-policy", (f"after-b:{host_key}",), p),
-        ])
+        facts, rules = direct_graph()
+        rules = [rule for rule in rules if rule.head != np]
     else:
         raise ValueError(variant)
 
@@ -220,6 +256,12 @@ def run_public(out: Path) -> dict:
                     "approx_cost": approx.cost if approx else None,
                     "approx_ratio": (approx.cost / exact.cost) if exact else None,
                     "selected_origins": len(exact.selected) if exact else 0,
+                    "selected_code_origins": (
+                        sum(problem.origin_map[identifier].kind == "code" for identifier in exact.selected)
+                        if exact else 0
+                    ),
+                    "uses_history": bool(exact and "history-change" in exact.selected),
+                    "uses_bridge": bool(exact and "entity-bridge" in exact.selected),
                     "frontier_entries": exact.total_frontier_entries if exact else 0,
                     "iterations": exact.iterations if exact else 0,
                     "certificate_file": "joint-certificates/" + cert_name,
@@ -271,6 +313,7 @@ def random_problem(rng: random.Random, index: int, origin_count: int) -> Problem
 def run_oracle(out: Path, cases_per_size: int = 75) -> dict:
     rng = random.Random(20260918)
     records = []
+    instances = []
     timing_records = []
     discrepancy = bound_failures = 0
     for n in range(4, 15):
@@ -298,8 +341,15 @@ def run_oracle(out: Path, cases_per_size: int = 75) -> dict:
                 "frontier_entries": exact.total_frontier_entries if exact else 0,
                 "agrees": agrees,
             })
+            instances.append({
+                "origins": n,
+                "index": index,
+                "problem": problem_to_dict(problem),
+                "oracle_selected": sorted(oracle) if oracle is not None else None,
+            })
             timing_records.append({"origins": n, "index": index, "exact_ns": exact_ns})
     dump_jsonl(out / "joint-oracle-cases.jsonl", records)
+    dump_jsonl(out / "joint-oracle-instances.jsonl", instances)
     dump_jsonl(out / "joint-oracle-timings.jsonl", timing_records)
     summary = {
         "seed": 20260918,
@@ -310,6 +360,7 @@ def run_oracle(out: Path, cases_per_size: int = 75) -> dict:
         "approximation_bound_violations": bound_failures,
         "certificate_cases": sum(r["certificate"] for r in records),
         "maximum_frontier_entries": max(r["frontier_entries"] for r in records),
+        "instance_recovery": "full serialized problems retained in joint-oracle-instances.jsonl; seed and generator are also recorded",
     }
     if discrepancy or bound_failures:
         raise AssertionError(summary)
@@ -439,7 +490,6 @@ def main() -> None:
     if args.part in {"all", "theory"}: summaries["theory"] = run_theory(args.out)
     if args.part in {"all", "scaling"}: summaries["scaling"] = run_scaling(args.out)
     if args.part == "all":
-        write_table(args.out, summaries["public"], summaries["oracle"], summaries["theory"], summaries["scaling"])
         summaries["status"] = "joint-campaign-passed"
         dump_json(args.out / "joint-summary.json", summaries)
     print(json.dumps(summaries, sort_keys=True))

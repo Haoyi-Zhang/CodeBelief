@@ -3,19 +3,26 @@
   "problem": {
     "facts": [
       {
-        "literal": "after-a:cjson",
-        "name": "after-only-a",
+        "literal": "bridge:cjson",
+        "name": "entity-bridge-fact",
         "origins": [
-          "after-feature",
+          "entity-bridge"
+        ]
+      },
+      {
+        "literal": "signal:cjson:before",
+        "name": "before-signal",
+        "origins": [
+          "before-feature",
           "history-change"
         ]
       },
       {
-        "literal": "after-b:cjson",
-        "name": "after-only-b",
+        "literal": "signal:cjson:after",
+        "name": "after-signal",
         "origins": [
-          "after-context",
-          "entity-bridge"
+          "after-feature",
+          "history-change"
         ]
       }
     ],
@@ -35,7 +42,10 @@
         "id": "before-feature",
         "kind": "code",
         "metadata": {
-          "tag": "v1.7.17"
+          "file": "inputs/public/cjson/v1.7.17/cJSON_SetValuestring.c",
+          "host": "cjson",
+          "project": "cJSON",
+          "snapshot": "v1.7.17"
         },
         "path": "inputs/public/cjson/v1.7.17/cJSON_SetValuestring.c",
         "weight": 1
@@ -45,7 +55,10 @@
         "id": "after-feature",
         "kind": "code",
         "metadata": {
-          "tag": "v1.7.18"
+          "file": "inputs/public/cjson/v1.7.18/cJSON_SetValuestring.c",
+          "host": "cjson",
+          "project": "cJSON",
+          "snapshot": "v1.7.18"
         },
         "path": "inputs/public/cjson/v1.7.18/cJSON_SetValuestring.c",
         "weight": 1
@@ -55,7 +68,10 @@
         "id": "before-context",
         "kind": "code",
         "metadata": {
-          "tag": "v1.7.17"
+          "file": "inputs/public/cjson/v1.7.17/cJSON_SetValuestring.c",
+          "host": "cjson",
+          "project": "cJSON",
+          "snapshot": "v1.7.17"
         },
         "path": "inputs/public/cjson/v1.7.17/cJSON_SetValuestring.c",
         "weight": 1
@@ -65,7 +81,10 @@
         "id": "after-context",
         "kind": "code",
         "metadata": {
-          "tag": "v1.7.18"
+          "file": "inputs/public/cjson/v1.7.18/cJSON_SetValuestring.c",
+          "host": "cjson",
+          "project": "cJSON",
+          "snapshot": "v1.7.18"
         },
         "path": "inputs/public/cjson/v1.7.18/cJSON_SetValuestring.c",
         "weight": 1
@@ -75,7 +94,10 @@
         "id": "shared-code",
         "kind": "code",
         "metadata": {
-          "tag": "v1.7.18"
+          "file": "inputs/public/cjson/v1.7.18/cJSON_SetValuestring.c",
+          "host": "cjson",
+          "project": "cJSON",
+          "snapshot": "v1.7.18"
         },
         "path": "inputs/public/cjson/v1.7.18/cJSON_SetValuestring.c",
         "weight": 1
@@ -86,11 +108,13 @@
         "kind": "change",
         "metadata": {
           "after_anchor": "if (object->valuestring == NULL || valuestring == NULL)",
-          "after_path": "inputs/public/cjson/v1.7.18/cJSON_SetValuestring.c",
-          "after_tag": "v1.7.18",
+          "after_file": "inputs/public/cjson/v1.7.18/cJSON_SetValuestring.c",
+          "after_origin": "after-feature",
+          "after_snapshot": "v1.7.18",
           "before_anchor": "if (object->valuestring == NULL)",
-          "before_path": "inputs/public/cjson/v1.7.17/cJSON_SetValuestring.c",
-          "before_tag": "v1.7.17",
+          "before_file": "inputs/public/cjson/v1.7.17/cJSON_SetValuestring.c",
+          "before_origin": "before-feature",
+          "before_snapshot": "v1.7.17",
           "host": "cjson",
           "project": "cJSON"
         },
@@ -102,7 +126,13 @@
         "id": "entity-bridge",
         "kind": "bridge",
         "metadata": {
-          "assumption": "the named routine denotes one evolving entity across the two tagged snapshots"
+          "after_origin": "after-feature",
+          "after_snapshot": "v1.7.18",
+          "assumption": "the referenced routine denotes one evolving entity across the two tagged snapshots",
+          "before_origin": "before-feature",
+          "before_snapshot": "v1.7.17",
+          "host": "cjson",
+          "project": "cJSON"
         },
         "path": null,
         "weight": 1
@@ -112,17 +142,11 @@
     "rules": [
       {
         "body": [
-          "after-a:cjson"
+          "signal:cjson:after",
+          "bridge:cjson"
         ],
         "head": "policy:cjson:valuestring-null-guard",
-        "name": "after-a-to-policy"
-      },
-      {
-        "body": [
-          "after-b:cjson"
-        ],
-        "head": "policy:cjson:valuestring-null-guard",
-        "name": "after-b-to-policy"
+        "name": "after-to-positive-policy"
       }
     ]
   },

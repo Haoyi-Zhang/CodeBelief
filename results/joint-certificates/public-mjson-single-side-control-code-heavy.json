@@ -3,19 +3,26 @@
   "problem": {
     "facts": [
       {
-        "literal": "after-a:mjson",
-        "name": "after-only-a",
+        "literal": "bridge:mjson",
+        "name": "entity-bridge-fact",
         "origins": [
-          "after-feature",
+          "entity-bridge"
+        ]
+      },
+      {
+        "literal": "signal:mjson:before",
+        "name": "before-signal",
+        "origins": [
+          "before-feature",
           "history-change"
         ]
       },
       {
-        "literal": "after-b:mjson",
-        "name": "after-only-b",
+        "literal": "signal:mjson:after",
+        "name": "after-signal",
         "origins": [
-          "after-context",
-          "entity-bridge"
+          "after-feature",
+          "history-change"
         ]
       }
     ],
@@ -35,7 +42,10 @@
         "id": "before-feature",
         "kind": "code",
         "metadata": {
-          "tag": "1.2.6"
+          "file": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
+          "host": "mjson",
+          "project": "mjson",
+          "snapshot": "1.2.6"
         },
         "path": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
         "weight": 3
@@ -45,7 +55,10 @@
         "id": "after-feature",
         "kind": "code",
         "metadata": {
-          "tag": "1.2.7"
+          "file": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+          "host": "mjson",
+          "project": "mjson",
+          "snapshot": "1.2.7"
         },
         "path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
         "weight": 3
@@ -55,7 +68,10 @@
         "id": "before-context",
         "kind": "code",
         "metadata": {
-          "tag": "1.2.6"
+          "file": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
+          "host": "mjson",
+          "project": "mjson",
+          "snapshot": "1.2.6"
         },
         "path": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
         "weight": 3
@@ -65,7 +81,10 @@
         "id": "after-context",
         "kind": "code",
         "metadata": {
-          "tag": "1.2.7"
+          "file": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+          "host": "mjson",
+          "project": "mjson",
+          "snapshot": "1.2.7"
         },
         "path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
         "weight": 3
@@ -75,7 +94,10 @@
         "id": "shared-code",
         "kind": "code",
         "metadata": {
-          "tag": "1.2.7"
+          "file": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+          "host": "mjson",
+          "project": "mjson",
+          "snapshot": "1.2.7"
         },
         "path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
         "weight": 3
@@ -86,11 +108,13 @@
         "kind": "change",
         "metadata": {
           "after_anchor": "for (i = 0, t = mul; t >= 1.0 && s + n < (int) sizeof(buf); i++)",
-          "after_path": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
-          "after_tag": "1.2.7",
+          "after_file": "inputs/public/mjson/1.2.7/mjson_print_dbl.c",
+          "after_origin": "after-feature",
+          "after_snapshot": "1.2.7",
           "before_anchor": "for (i = 0, t = mul; d >= 1.0 && s + n < (int) sizeof(buf); i++)",
-          "before_path": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
-          "before_tag": "1.2.6",
+          "before_file": "inputs/public/mjson/1.2.6/mjson_print_dbl.c",
+          "before_origin": "before-feature",
+          "before_snapshot": "1.2.6",
           "host": "mjson",
           "project": "mjson"
         },
@@ -102,7 +126,13 @@
         "id": "entity-bridge",
         "kind": "bridge",
         "metadata": {
-          "assumption": "the named routine denotes one evolving entity across the two tagged snapshots"
+          "after_origin": "after-feature",
+          "after_snapshot": "1.2.7",
+          "assumption": "the referenced routine denotes one evolving entity across the two tagged snapshots",
+          "before_origin": "before-feature",
+          "before_snapshot": "1.2.6",
+          "host": "mjson",
+          "project": "mjson"
         },
         "path": null,
         "weight": 1
@@ -112,17 +142,11 @@
     "rules": [
       {
         "body": [
-          "after-a:mjson"
+          "signal:mjson:after",
+          "bridge:mjson"
         ],
         "head": "policy:mjson:place-controlled-integer-loop",
-        "name": "after-a-to-policy"
-      },
-      {
-        "body": [
-          "after-b:mjson"
-        ],
-        "head": "policy:mjson:place-controlled-integer-loop",
-        "name": "after-b-to-policy"
+        "name": "after-to-positive-policy"
       }
     ]
   },
