@@ -82,14 +82,19 @@ Model details and the fixed campaign protocol are in `docs/`.
 `external_resources.csv` records resource provenance and access conditions.
 Historical logs describe their original runs, not the current test census.
 
+The reported origin costs charge the selected logical proof support. Replay
+also checks the complete origin table, including unselected endpoint context.
+The cost ratios do not measure complete material size or replay-work savings.
+
 ## Optional vector figures
 
 ```sh
 python -m pip install -r requirements-figures.txt
 python -B scripts/plot_figures.py
+python -B plot_schematics.py --outdir figures
 ```
 
-The renderer reads retained `joint-theory.csv` and `joint-scaling.csv`;
+The data renderer reads retained `joint-theory.csv` and `joint-scaling.csv`;
 it does not rerun experiments. It writes vector PDFs to `figures/` and,
 if present, copies them to the sibling paper's `figures/` directory.
 Use `--out` and `--paper-dir` to select destinations.

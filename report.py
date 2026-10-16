@@ -85,7 +85,7 @@ def main() -> None:
         "by_size": population_rows,
         "horn": horn,
     }
-    (args.out / "summary.json").write_text(json.dumps(legacy_summary, sort_keys=True, indent=2) + "\n")
+    (args.out / "summary.json").write_text(json.dumps(legacy_summary, sort_keys=True, indent=2) + "\n", encoding="utf-8", newline="\n")
 
     population_lines = [
         r"\begin{tabular}{rrrrrr}", r"\toprule",
@@ -105,7 +105,7 @@ def main() -> None:
         r"\midrule", "Total & " + " & ".join(f"{value:,}" for value in values) + r" \\",
         r"\bottomrule", r"\end{tabular}",
     ]
-    (args.out / "population-table.tex").write_text("\n".join(population_lines) + "\n")
+    (args.out / "population-table.tex").write_text("\n".join(population_lines) + "\n", encoding="utf-8", newline="\n")
 
     public_summary = read_json(results / "joint-public-summary.json")
     oracle_summary = read_json(results / "joint-oracle-summary.json")
@@ -179,7 +179,7 @@ def main() -> None:
             macro(prefix + "ChoiceSelected", row["selected_origins"]),
             macro(prefix + "ChoiceCodeOrigins", row["selected_code_origins"]),
         ]
-    (args.out / "paper-numbers.tex").write_text("\n".join(macro_lines) + "\n")
+    (args.out / "paper-numbers.tex").write_text("\n".join(macro_lines) + "\n", encoding="utf-8", newline="\n")
 
     main_table = rf"""\begin{{tabularx}}{{\textwidth}}{{@{{}}>{{\raggedright\arraybackslash}}p{{.24\textwidth}}>{{\raggedright\arraybackslash}}p{{.20\textwidth}}rX@{{}}}}
 \toprule
@@ -195,7 +195,7 @@ Ordinary-Horn cross-check & {horn_formulas:,} formulas; {horn_inconsistent:,} in
 \bottomrule
 \end{{tabularx}}
 """
-    (args.out / "joint-results-table.tex").write_text(main_table)
+    (args.out / "joint-results-table.tex").write_text(main_table, encoding="utf-8", newline="\n")
 
     strata = defaultdict(list)
     for row in oracle_cases:
@@ -220,7 +220,7 @@ Ordinary-Horn cross-check & {horn_formulas:,} formulas; {horn_inconsistent:,} in
             f"{statistics.median(row['exact_cost'] for row in positives):.1f} & {max(ratios):.3f} " + r"\\"
         )
     strata_lines += [r"\bottomrule", r"\end{tabular}"]
-    (args.out / "joint-oracle-strata.tex").write_text("\n".join(strata_lines) + "\n")
+    (args.out / "joint-oracle-strata.tex").write_text("\n".join(strata_lines) + "\n", encoding="utf-8", newline="\n")
 
     weights = {
         "unit": "$1/1/1$",
@@ -240,7 +240,7 @@ Ordinary-Horn cross-check & {horn_formulas:,} formulas; {horn_inconsistent:,} in
             f"{row['selected_origins']} & {row['selected_code_origins']} " + r"\\"
         )
     profile_lines += [r"\bottomrule", r"\end{tabular}"]
-    (args.out / "choice-profile-table.tex").write_text("\n".join(profile_lines) + "\n")
+    (args.out / "choice-profile-table.tex").write_text("\n".join(profile_lines) + "\n", encoding="utf-8", newline="\n")
 
     print(json.dumps({
         "legacy": legacy_summary,
